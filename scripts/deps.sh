@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
 # Builds statically linkable dependencies for both supported platforms
 # On the Windows side, most of this is just unzipping and sorting pre-built binaries
 # On the Linux side, we're only compiling CURL and installing Debian packages
@@ -5,7 +8,7 @@
 if command -v apt > /dev/null; then
 
   echo "Checking for necessary -dev packages..."
-  sudo apt install \
+  sudo apt install -y \
     libarchive-dev \
     libxml2-dev \
     liblzma-dev \
@@ -18,7 +21,7 @@ if command -v apt > /dev/null; then
     libidn2-dev
 
   echo "Checking for MinGW for cross-compilation..."
-  sudo apt install \
+  sudo apt install -y \
     mingw-w64 \
     mingw-w64-tools \
     gcc-mingw-w64-x86-64 \

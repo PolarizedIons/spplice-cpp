@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 target_windows=false
 target_both=false
+working_dir=$(pwd)
 
 for arg in "$@"; do
   if [ "$arg" == "--win" ]; then
@@ -15,6 +17,7 @@ done
 # Doing this, of course, assumes you agree to comply with the Qt open source licence.
 if [ ! -d "./qt5build" ]; then
   cd scripts
+
   if [ "$target_both" == true ]; then
     ./qt5setup.sh --both
   elif [ "$target_windows" == true ]; then
@@ -22,9 +25,12 @@ if [ ! -d "./qt5build" ]; then
   else
     ./qt5setup.sh
   fi
+
+  cd $working_dir
 fi
 
 # Compile UI files into headers.
+echo "Compiling UI files..."
 cd ui
 ../qt5build/linux/bin/uic -o mainwindow.h MainWindow.ui
 ../qt5build/linux/bin/uic -o packageitem.h PackageItem.ui
@@ -36,15 +42,17 @@ cd ..
 
 # Build application dependencies if not present
 if [ ! -d "./deps" ]; then
+  echo "Building dependencies..."
   cd scripts
   ./deps.sh
+  cd $working_dir
 fi
 
 rm -rf build
 mkdir build
 
 # Create a directory for the distributable files.
-mkdir dist
+mkdir -p dist
 
 cd build
 
@@ -77,6 +85,7 @@ else
     sed -i "s|^#define TARGET_WINDOWS|// #define TARGET_WINDOWS|" ../globals.h
     cmake ../scripts
   fi
+
   make -j$(nproc)
 
   # Move the output binary to distributables directory.
@@ -111,8 +120,8 @@ if [ "$target_windows" == true ] || [ "$target_both" == true ]; then
   cp -r ../qt5build/win32/plugins/imageformats                     ./win32
   # Copy C++ dependencies
   cp /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll               ./win32
-  cp /usr/lib/gcc/x86_64-w64-mingw32/12-posix/libgcc_s_seh-1.dll   ./win32
-  cp /usr/lib/gcc/x86_64-w64-mingw32/12-posix/libstdc++-6.dll      ./win32
+  cp /usr/lib/gcc/x86_64-w64-mingw32/*-posix/libgcc_s_seh-1.dll   ./win32
+  cp /usr/lib/gcc/x86_64-w64-mingw32/*-posix/libstdc++-6.dll      ./win32
   # Strip debug symbols
   strip ./win32/SppliceCPP.exe
   strip ./win32/*.dll

@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 target_windows=false
 target_both=false
@@ -16,6 +17,8 @@ cd ..
 
 if [ "$target_both" == true ]; then
   echo "Building Qt5 for Linux and Windows..."
+  rm -rf ./qt5build/win32
+  rm -rf ./qt5build/linux
 elif [ "$target_windows" == true ]; then
   echo "Building Qt5 for Windows..."
   rm -rf ./qt5build/win32
@@ -38,7 +41,7 @@ git checkout 5.15
 
 mkdir build
 cd build
-make clean
+make clean || true
 
 function configure_linux {
   ../configure -release -opensource -confirm-license \

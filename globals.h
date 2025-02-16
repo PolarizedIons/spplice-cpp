@@ -7,6 +7,11 @@
 // Comment this line to target Linux, uncomment to target Windows
 // #define TARGET_WINDOWS
 
+#ifdef TARGET_WINDOWS
+    #define _WIN32_WINNT 0x0602
+    #define WINVER 0x0602
+#endif
+
 extern std::filesystem::path CACHE_DIR;
 extern bool CACHE_ENABLE;
 extern const std::filesystem::path APP_DIR;

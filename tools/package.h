@@ -1,10 +1,12 @@
 #ifndef TOOLS_PACKAGE_H
 #define TOOLS_PACKAGE_H
 
-#include <filesystem>
 #include <QObject>
 #include <QPixmap>
 #include <QJsonObject>
+
+// Note: needs to be included AFTER QObject
+#include <filesystem>
 
 class ToolsPackage {
   public:
